@@ -5,5 +5,14 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-rootProject.name = "SimpleCalendar"
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "JarvisAI"
 include(":app")
