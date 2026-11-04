@@ -1,0 +1,8 @@
+// Top-level build file. Modern Android Gradle Plugin, used by CI with Gradle 8.9 and JDK 17.
+plugins {
+    id 'com.android.application' version '8.6.1' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
