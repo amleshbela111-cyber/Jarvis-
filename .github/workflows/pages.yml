@@ -1,0 +1,47 @@
+name: Deploy JARVIS PWA to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required PWA files
+        run: |
+          set -e
+          test -f jarvis_energy_core_pwa/index.html
+          test -f jarvis_energy_core_pwa/manifest.json
+          test -f jarvis_energy_core_pwa/sw.js
+          test -f jarvis_energy_core_pwa/icons/icon-192.png
+          test -f jarvis_energy_core_pwa/icons/icon-512.png
+          echo "All PWA files found"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: jarvis_energy_core_pwa
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
