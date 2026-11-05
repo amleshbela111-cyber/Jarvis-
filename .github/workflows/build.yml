@@ -1,0 +1,77 @@
+name: Build JARVIS Energy Core
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Validate and package PWA
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate required project files
+        run: |
+          test -f index.html
+          test -f manifest.json
+          test -f sw.js
+          test -f icons/icon-192.png
+          test -f icons/icon-512.png
+
+      - name: Validate manifest JSON and PWA references
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path("manifest.json").read_text(encoding="utf-8"))
+          html = Path("index.html").read_text(encoding="utf-8")
+          sw = Path("sw.js").read_text(encoding="utf-8")
+
+          assert manifest.get("name"), "manifest name is missing"
+          assert manifest.get("start_url"), "manifest start_url is missing"
+          assert manifest.get("display") in {"standalone", "fullscreen", "minimal-ui"}, \
+              "manifest display mode is not installable"
+          assert 'href="./manifest.json"' in html, "index.html does not link manifest.json"
+          assert 'serviceWorker.register("./sw.js")' in html, \
+              "index.html does not register sw.js"
+          assert "addEventListener(\"install\"" in sw, "service worker install handler missing"
+          assert "addEventListener(\"fetch\"" in sw, "service worker fetch handler missing"
+
+          for icon in ("icons/icon-192.png", "icons/icon-512.png"):
+              data = Path(icon).read_bytes()
+              assert data.startswith(b"\\x89PNG\\r\\n\\x1a\\n"), f"{icon} is not a PNG"
+
+          print("PWA source validation passed.")
+          PY
+
+      - name: Create deployable PWA bundle
+        run: |
+          mkdir -p dist
+          zip -r dist/Jarvis-AI-PWA.zip \
+            index.html manifest.json sw.js icons README.txt \
+            -x "*.DS_Store"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Jarvis-AI-PWA
+          path: dist/Jarvis-AI-PWA.zip
+          if-no-files-found: error
+          retention-days: 14

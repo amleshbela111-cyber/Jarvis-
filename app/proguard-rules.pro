@@ -1,17 +1,9 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in C:\Users\DeViL\AppData\Local\Android\Sdk/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Shizuku loads ShellService by name, so it must be kept.
+-keep class com.jarvis.ai.shizuku.** { *; }
+-keep class rikka.shizuku.** { *; }
 
-# Add any project specific keep options here:
-
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Vosk and JNA use native code and reflection; keep them so release builds still work.
+-keep class org.vosk.** { *; }
+-keep class com.sun.jna.** { *; }
+-keepclassmembers class * extends com.sun.jna.* { public *; }
+-dontwarn java.awt.**

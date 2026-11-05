@@ -1,9 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Jarvis</string>
-    <string name="speak_button">speak button</string>
-    <string name="jarvis_logo">Jarvis logo</string>
-    <string name="exit_message">It\'s been a pleasure to be in your company, my friend</string>
-    <string name="app_opened">Opening the app for you. Have fun!</string>
-    <string name="app_not_found">Aw. The app you are looking for does not exist!</string>
-    <string name="opening_app">Hold on while I open it for you, will ya?</string>
+    <string name="app_name">Jarvis AI</string>
+    <string name="accessibility_description">Lets Jarvis tap, scroll, type, and read the screen, but only when you give a voice command. It does not record or watch your activity.</string>
 </resources>
